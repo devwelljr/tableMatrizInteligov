@@ -1,10 +1,9 @@
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import { useTable, useSortBy } from "react-table";
-import Context from "./context/Context";
 import InfiniteScroll from "react-infinite-scroll-component";
 
+import Context from "./context/Context";
 import DropFileInput from "./components/DropFileInput";
-
 import ContainerTable from "./styles/table";
 
 function App() {
@@ -16,6 +15,8 @@ function App() {
       return {
         Header: head,
         accessor: head,
+        maxWidth: 3000,
+        minWidth: 150,
       };
     });
 
@@ -23,6 +24,7 @@ function App() {
       {
         Header: "columns",
         columns: columnsArray,
+        canResize: true,
       },
     ]);
 
@@ -38,7 +40,7 @@ function App() {
         columns,
         data: items,
       },
-      useSortBy
+      useSortBy,
     );
 
     useEffect(() => {
@@ -52,13 +54,19 @@ function App() {
         hasMore={true}
         loader={<h4>Loading more 30 itens...</h4>}
       >
-        { console.log(rows.length) }
-        <table {...getTableProps()}>
+        <table id='table' {...getTableProps()}>
           <thead>
             {headerGroups.map((headerGroup) => (
               <tr {...headerGroup.getHeaderGroupProps()}>
                 {headerGroup.headers.map((column) => (
-                  <th {...column.getHeaderProps()}>
+                  <th
+                    {...column.getHeaderProps({
+                      style: {
+                        minWidth: column.minWidth,
+                        maxWidth: column.maxWidth,
+                      },
+                    })}
+                  >
                     {column.render("Header")}
                   </th>
                 ))}
@@ -85,7 +93,6 @@ function App() {
   }
 
   const fetchMoreData = (inicial, final) => {
-    console.log(`inicial: ${inicial} final: ${final}`)
     setTimeout(() => {
       setItems([...items, ...dataParse.slice(inicial, final)]);
     }, 1500);
@@ -106,5 +113,4 @@ function App() {
     </>
   );
 }
-
 export default App;
