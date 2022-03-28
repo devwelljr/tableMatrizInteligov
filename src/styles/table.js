@@ -38,6 +38,8 @@ export default styled.main`
       position: relative;
       flex-shrink: 1 !important;
       min-width: auto !important;
+      overflow: hidden;
+      text-overflow: ellipsis;
 
       :last-child {
         border-right: 0;
@@ -47,14 +49,13 @@ export default styled.main`
     .resizer {
         display: inline-block;
         background: blue;
-        width: 10px;
+        width: 5px;
         height: 100%;
         position: absolute;
         right: 0;
         top: 0;
         transform: translateX(50%);
         z-index: 1;
-        ${'' /* prevents from scrolling while dragging on touch devices */}
         touch-action:none;
 
         &.isResizing {
