@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useMemo, useState } from "react";
-import { useTable, useSortBy } from "react-table";
+import { useTable, useSortBy, useResizeColumns, useBlockLayout } from "react-table";
 import InfiniteScroll from "react-infinite-scroll-component";
 
 import Context from "./context/Context";
@@ -15,8 +15,6 @@ function App() {
       return {
         Header: head,
         accessor: head,
-        maxWidth: 3000,
-        minWidth: 150,
       };
     });
 
@@ -25,8 +23,10 @@ function App() {
         Header: "columns",
         columns: columnsArray,
         canResize: true,
+        maxWidth: 1000,
+        minWidth: 150,
       },
-    ]);
+    ], [])
 
     const {
       getTableProps,
@@ -41,6 +41,8 @@ function App() {
         data: items,
       },
       useSortBy,
+      useBlockLayout,
+      useResizeColumns
     );
 
     useEffect(() => {
@@ -68,6 +70,12 @@ function App() {
                     })}
                   >
                     {column.render("Header")}
+                    <div
+                      {...column.getResizerProps()}
+                      className={`resizer ${
+                        column.isResizing ? "isResizing" : ""
+                      }`}
+                    />
                   </th>
                 ))}
               </tr>
@@ -80,7 +88,16 @@ function App() {
                 <tr {...row.getRowProps()}>
                   {row.cells.map((cell) => {
                     return (
-                      <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
+                      <td
+                        {...cell.getCellProps({
+                          style: {
+                            minWidth: cell.column.minWidth,
+                            width: cell.column.width,
+                          },
+                        })}
+                      >
+                        {cell.render("Cell")}
+                      </td>
                     );
                   })}
                 </tr>
